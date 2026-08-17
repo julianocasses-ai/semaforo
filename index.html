@@ -1,1 +1,353 @@
 
+
+
+Pular para o conteúdo
+Como usar o E-mail de SEED com leitores de tela
+9 de 253
+importante
+Caixa de entrada
+
+JULIANO LEGUICAMO CASSES <juliano.casses@escola.pr.gov.br>
+qui., 6 de ago., 16:30 (há 11 dias)
+para mim
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semáforo Acessível com Arduino</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --accent-red: #ef4444;
+      --accent-yellow: #eab308;
+      --accent-green: #22c55e;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .red { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+    .yellow { background: rgba(234, 179, 8, 0.2); color: var(--accent-yellow); }
+    .green { background: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
+
+    /* Botões de Teste Sonoro */
+    .btn-som {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.1s ease, opacity 0.2s;
+    }
+
+    .btn-som:hover {
+      opacity: 0.9;
+    }
+
+    .btn-som:active {
+      transform: scale(0.97);
+    }
+
+    .btn-red { background-color: var(--accent-red); color: #fff; }
+    .btn-yellow { background-color: var(--accent-yellow); color: #000; }
+    .btn-green { background-color: var(--accent-green); color: #fff; }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.75rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    th {
+      background-color: #0f172a;
+    }
+
+    pre {
+      background: #090d16;
+      padding: 1.2rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #a7f3d0;
+      border: 1px solid #1e293b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Semáforo Sonoro de Acessibilidade</h1>
+      <p class="subtitle">Projeto desenvolvido com Arduino Uno, Módulo Semáforo e Buzzer na Protoboard</p>
+    </header>
+
+    <!-- SIMULADOR INTERATIVO -->
+    <section class="card">
+      <h2>Simulador Sonoro Interativo</h2>
+      <p>Clique nos botões para ouvir a simulação exata da sequência sonora emitida pelo buzzer do Arduino:</p>
+
+      <div class="grid">
+        <div class="card red" style="margin-bottom:0;">
+          <span class="badge red">Sinal Vermelho</span>
+          <h3>3 Bipes</h3>
+          <p>Indica parada obrigatória para pedestres.</p>
+          <button class="btn-som btn-red" onclick="tocarBipes(3)">Ouvir Sinal Vermelho</button>
+        </div>
+
+        <div class="card yellow" style="margin-bottom:0;">
+          <span class="badge yellow">Sinal Amarelo</span>
+          <h3>2 Bipes</h3>
+          <p>Alerta de mudança do sinal.</p>
+          <button class="btn-som btn-yellow" onclick="tocarBipes(2)">Ouvir Sinal Amarelo</button>
+        </div>
+
+        <div class="card green" style="margin-bottom:0;">
+          <span class="badge green">Sinal Verde</span>
+          <h3>1 Bipe</h3>
+          <p>Permissão para atravessar com segurança.</p>
+          <button class="btn-som btn-green" onclick="tocarBipes(1)">Ouvir Sinal Verde</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MONTAGEM E MATERIAIS -->
+    <section class="card">
+      <h2>1. Componentes e Montagem do Circuito</h2>
+      <p>O circuito foi construído utilizando um módulo pré-montado de semáforo e um buzzer instalado em uma protoboard para organização dos cabos:</p>
+      
+      <ul>
+        <li><strong>Arduino Uno:</strong> Placa responsável pelo processamento do programa e temporização.</li>
+        <li><strong>Módulo Semáforo (Placa Pronta):</strong> Contém os LEDs Vermelho, Amarelo e Verde integrados com resistores embutidos.</li>
+        <li><strong>Protoboard:</strong> Matriz de contatos usada para fixar o Buzzer Piezoelétrico.</li>
+        <li><strong>Buzzer Piezoelétrico:</strong> Emitir o sinal sonoro de acessibilidade.</li>
+        <li><strong>Jumpers:</strong> Fios de conexão ligando os módulos às portas do Arduino.</li>
+      </ul>
+
+      <h3>Tabela de Ligação dos Pinos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Localização</th>
+            <th>Pino do Componente</th>
+            <th>Pino Digital no Arduino</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Módulo Semáforo</td>
+            <td>Placa Pronta</td>
+            <td>GND</td>
+            <td>GND</td>
+          </tr>
+          <tr>
+            <td>Módulo Semáforo</td>
+            <td>Placa Pronta</td>
+            <td>R (Vermelho)</td>
+            <td>Pino 10</td>
+          </tr>
+          <tr>
+            <td>Módulo Semáforo</td>
+            <td>Placa Pronta</td>
+            <td>Y (Amarelo)</td>
+            <td>Pino 9</td>
+          </tr>
+          <tr>
+            <td>Módulo Semáforo</td>
+            <td>Placa Pronta</td>
+            <td>G (Verde)</td>
+            <td>Pino 8</td>
+          </tr>
+          <tr>
+            <td>Buzzer Piezoelétrico</td>
+            <td>Protoboard</td>
+            <td>Terminal (+) / Sinal</td>
+            <td>Pino 6</td>
+          </tr>
+          <tr>
+            <td>Buzzer Piezoelétrico</td>
+            <td>Protoboard</td>
+            <td>Terminal (-) / GND</td>
+            <td>GND</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- CÓDIGO FONTE -->
+    <section class="card">
+      <h2>2. Código-Fonte C++ (Para VS Code / PlatformIO)</h2>
+      <p>Código carregado no Arduino Uno para gerenciar a temporização e o número de bipes:</p>
+      <pre><code>#include &lt;Arduino.h&gt;
+
+// Mapeamento dos Pinos
+const int PIN_VERMELHO = 10;
+const int PIN_AMARELO  = 9;
+const int PIN_VERDE    = 8;
+const int PIN_BUZZER   = 6;
+
+// Função para emitir 1 bipe curto (1000 Hz)
+void emitirBipe() {
+  tone(PIN_BUZZER, 1000); 
+  delay(150);             
+  noTone(PIN_BUZZER);     
+  delay(200);             
+}
+
+// Emite N bipes sequenciais
+void apitar(int quantidade) {
+  for (int i = 0; i &lt; quantidade; i++) {
+    emitirBipe();
+  }
+}
+
+void setup() {
+  pinMode(PIN_VERMELHO, OUTPUT);
+  pinMode(PIN_AMARELO, OUTPUT);
+  pinMode(PIN_VERDE, OUTPUT);
+  pinMode(PIN_BUZZER, OUTPUT);
+}
+
+void loop() {
+  // 1. VERMELHO: 3 bipes
+  digitalWrite(PIN_VERMELHO, HIGH);
+  digitalWrite(PIN_AMARELO, LOW);
+  digitalWrite(PIN_VERDE, LOW);
+  apitar(3);
+  delay(4000);
+
+  // 2. AMARELO: 2 bipes
+  digitalWrite(PIN_VERMELHO, LOW);
+  digitalWrite(PIN_AMARELO, HIGH);
+  digitalWrite(PIN_VERDE, LOW);
+  apitar(2);
+  delay(2000);
+
+  // 3. VERDE: 1 bipe
+  digitalWrite(PIN_VERMELHO, LOW);
+  digitalWrite(PIN_AMARELO, LOW);
+  digitalWrite(PIN_VERDE, HIGH);
+  apitar(1);
+  delay(4000);
+}</code></pre>
+    </section>
+  </div>
+
+  <!-- LÓGICA DE ÁUDIO WEB -->
+  <script>
+    let audioCtx = null;
+
+    function obterAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function emitirBipe() {
+      const ctx = obterAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.value = 1000;
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+
+      osc.start();
+      setTimeout(() => {
+        osc.stop();
+      }, 150);
+    }
+
+    function tocarBipes(quantidade) {
+      let contador = 0;
+      const intervalo = setInterval(() => {
+        emitirBipe();
+        contador++;
+        if (contador >= quantidade) {
+          clearInterval(intervalo);
+        }
+      }, 350);
+    }
+  </script>
+
+</body>
+</html>
+
